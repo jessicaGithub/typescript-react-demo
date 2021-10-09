@@ -13,7 +13,6 @@ import initialData from '../data.json';
 // style
 import './index.css';
 
-
 const AppointmentItem = ({apptDetail}) => {
   const startDateFormatted = moment(apptDetail.startDate, moment.ISO_8601);
   const endDateFormatted = moment(apptDetail.endDate, moment.ISO_8601);
@@ -37,15 +36,57 @@ const AppointmentItem = ({apptDetail}) => {
 }; 
 
 const AppointmentList = () => {
+  const [sortedData, setSortedData] = useState(groupBy(initialData, ""));
+  const [sortedKeyVals, setSortedKeyVals] = useState(getKeyVals(initialData, ""));
+
+  const [items] = useState([
+    { label: "None", value: "" },
+    // { label: "Date", value: "startDate" },
+    { label: "Clinician", value: "clinicianName" }
+  ]);
+  
+  const [groupByVal, setGroupByVal] = useState('');
+
+  function handleSelectChange( event ) {
+
+    let currentVal = event.target.value;
+    setGroupByVal( currentVal );
+    setSortedData( groupBy(initialData, currentVal) );
+    setSortedKeyVals( getKeyVals(initialData, currentVal) );
+  }
+
   return (
     <div className="apptDashboard">
-      <h2>Appointment Dashboard</h2>
-      <div className="apptList">
-        {initialData.map( (appt) => (
-          <AppointmentItem key={appt.id} apptDetail={appt} />
+      <h1>Appointment Dashboard</h1>
+
+      <p>Group by: </p>
+      <select value={groupByVal} onChange={handleSelectChange}>
+        {items.map(item => (
+          <option
+            key={item.value}
+            value={item.value}
+          >
+            {item.label}
+          </option>
         ))}
+      </select>
+
+
+        {sortedKeyVals.map(function(name, index){
+          return <div key={ index } className="apptList">
+            <h2>{name ? name : "All appointments"}</h2>
+            
+            {sortedData[name].map( (appt) => (
+                <AppointmentItem key={appt.id} apptDetail={appt} />
+            ))}
+
+          </div>;
+        })}
+        {/* {sortedData.map( (appt) => (
+            <AppointmentItem key={appt.id} apptDetail={appt} />
+        ))} */}
       </div>
-    </div>
+
   )
 };
 
@@ -53,3 +94,21 @@ ReactDOM.render(
   <AppointmentList />,
   document.getElementById('app'),
 )
+
+// reusable functions
+function sortByDate( arr ) {
+  return arr.sort( ( a, b ) => { return new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf() })
+}
+
+function groupBy( arr, key ) {
+  let result = arr.reduce((res, item) => {
+      res[item[key]] = [...res[item[key]] || [], item];
+      return res;
+    }, {});
+
+  return result;
+}
+
+function getKeyVals (arr, key) {
+  return arr.map(item => item[key]).filter((value, index, self) => self.indexOf(value) === index);
+}

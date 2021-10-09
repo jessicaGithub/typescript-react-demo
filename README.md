@@ -10,7 +10,7 @@ This project is written in Typescript and uses Parcel.js to build. Yarn is the p
 # OK, so what are we doing?
 Your mission is to display the list of appointments within the data.json file on the screen. The appointments must be:
 - Displayed with the name of the patient, start date, start time, duration, and clinician name.
-- Grouped either by appointment day or by clinican name depending on what the user selects from a dropdown.
+- Grouped either by appointment day or by clinician name depending on what the user selects from a dropdown.
 - Ordered by start date.
 - Highlight any appointment that is greater than 1 hour in duration.
 - Allow a user to add a new appointment (in memory only, no need to modify the data.json file)
