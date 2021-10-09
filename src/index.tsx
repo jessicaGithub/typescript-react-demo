@@ -41,7 +41,7 @@ const AppointmentList = () => {
 
   const [items] = useState([
     { label: "None", value: "" },
-    // { label: "Date", value: "startDate" },
+    { label: "Date", value: "startDate" },
     { label: "Clinician", value: "clinicianName" }
   ]);
   
@@ -72,19 +72,16 @@ const AppointmentList = () => {
       </select>
 
 
-        {sortedKeyVals.map(function(name, index){
+        {sortedKeyVals.map(function(keyName, index){
           return <div key={ index } className="apptList">
-            <h2>{name ? name : "All appointments"}</h2>
+            <h2>{keyName ? keyName : "All appointments"}</h2>
             
-            {sortedData[name].map( (appt) => (
+            {sortedData[keyName].map( (appt) => (
                 <AppointmentItem key={appt.id} apptDetail={appt} />
             ))}
 
           </div>;
         })}
-        {/* {sortedData.map( (appt) => (
-            <AppointmentItem key={appt.id} apptDetail={appt} />
-        ))} */}
       </div>
 
   )
@@ -103,11 +100,12 @@ function sortByDate( arr ) {
 function groupBy( arr, key ) {
   let result = arr.reduce((res, item) => {
       res[item[key]] = [...res[item[key]] || [], item];
+      sortByDate(res[item[key]]);
       return res;
     }, {});
-
-  return result;
-}
+  
+    return result;
+  }
 
 function getKeyVals (arr, key) {
   return arr.map(item => item[key]).filter((value, index, self) => self.indexOf(value) === index);
