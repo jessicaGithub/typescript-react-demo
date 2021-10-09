@@ -14,19 +14,11 @@ import initialData from '../data.json';
 import './index.css';
 
 const AppointmentItem = ({apptDetail}) => {
-  const startDateFormatted = moment(apptDetail.startDate, moment.ISO_8601);
-  const endDateFormatted = moment(apptDetail.endDate, moment.ISO_8601);
-
-  const apptDuration = moment.duration( endDateFormatted.diff(startDateFormatted) );
-  const durationHour = apptDuration.hours();
-  const durationMinute = apptDuration.minutes();
-  const isLongAppt = durationHour > 1 && durationMinute > 0;
-
   return (
-    <div key={apptDetail.id} className={`apptItem ${isLongAppt ? "apptItem--long" : ""} apptItem--${apptDetail.status.toLowerCase()}`}>
-      <p><strong>Date:</strong> {startDateFormatted.format("dddd, MMMM Do YYYY")}</p>
-      <p><strong>Time:</strong> {startDateFormatted.format("h:mm a")} - {endDateFormatted.format("h:mm a")}</p>
-      <p><strong>Duration:</strong> {durationHour > 0 ? durationHour + ' hour' : '' }{ durationHour >= 2 ? 's' : '' } {durationMinute > 0 ? durationMinute + ' minute' : '' }{ durationMinute >= 2 ? 's' : '' } </p>
+    <div key={apptDetail.id} className={`apptItem ${apptDetail.isLongAppt ? "apptItem--long" : ""} apptItem--${apptDetail.status.toLowerCase()}`}>
+      <p><strong>Date:</strong> {apptDetail.startDate}</p>
+      <p><strong>Time:</strong> {apptDetail.startTime} - {apptDetail.endTime}</p>
+      <p><strong>Duration:</strong> {apptDetail.durationHour > 0 ? apptDetail.durationHour + ' hour' : '' }{ apptDetail.durationHour >= 2 ? 's' : '' } {apptDetail.durationMinute > 0 ? apptDetail.durationMinute + ' minute' : '' }{ apptDetail.durationMinute >= 2 ? 's' : '' } </p>
       <hr/>
       <p><strong>Clinician:</strong> {apptDetail.clinicianName}</p>
       <p><strong>Patient:</strong> {apptDetail.patient.name}</p>
@@ -94,11 +86,34 @@ ReactDOM.render(
 
 // reusable functions
 function sortByDate( arr ) {
-  return arr.sort( ( a, b ) => { return new Date(a.startDate).valueOf() - new Date(b.startDate).valueOf() })
+  return arr.sort( ( a, b ) => { return new moment(a.startDate, 'dddd, MMMM Do YYYY') - new moment(b.startDate, 'dddd, MMMM Do YYYY')) })
 }
 
 function groupBy( arr, key ) {
-  let result = arr.reduce((res, item) => {
+
+
+      arr.map( (item) => {
+
+        if ( ! moment(item.startDate, 'dddd, MMMM Do YYYY', true).isValid() ) {
+
+          const startDateFormatted = moment(item.startDate, moment.ISO_8601);
+          const endDateFormatted = moment(item.endDate, moment.ISO_8601);
+          const apptDuration = moment.duration( endDateFormatted.diff(startDateFormatted) );
+          
+          item.startDate = startDateFormatted.format("dddd, MMMM Do YYYY").toString();
+          item.endDate = endDateFormatted.format("dddd, MMMM Do YYYY").toString();
+          item.startTime = startDateFormatted.format("h:mm a").toString();
+          item.endTime = endDateFormatted.format("h:mm a").toString();
+          item.durationHour = apptDuration.hours();
+          item.durationMinute = apptDuration.minutes();
+          item.isLongAppt = apptDuration.hours() > 1 && apptDuration.minutes() > 0;
+        }
+
+        return item;
+      }) 
+
+
+    let result = arr.reduce((res, item) => {
       res[item[key]] = [...res[item[key]] || [], item];
       sortByDate(res[item[key]]);
       return res;

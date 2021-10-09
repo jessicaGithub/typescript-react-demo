@@ -12,6 +12,12 @@
     display: grid;
     grid-gap: 1rem;
     margin: 2rem auto;
+    border-bottom: 1px solid lightgrey;
+    padding-bottom: 4rem;
+}
+
+.apptList:last-of-type {
+    border-bottom: 0;
 }
 
 @media (min-width: 600px) {
