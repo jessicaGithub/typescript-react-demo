@@ -1,0 +1,47 @@
+* {
+    box-sizing: border-box;
+}
+
+.apptDashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.apptList {
+    display: grid;
+    grid-gap: 1rem;
+    margin: 2rem auto;
+}
+
+@media (min-width: 600px) {
+    .apptList { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 900px) {
+    .apptList { grid-template-columns: repeat(3, 1fr); }
+}
+
+
+@media (min-width: 1200px) {
+    .apptList { grid-template-columns: repeat(4, 1fr); }
+}
+
+
+.apptItem {
+    padding: 1rem;
+    border: 1px dashed lightgrey;
+}
+
+.apptItem--long {
+    background-color: yellow;
+}
+
+.apptItem--cancelled {
+    background-color: lightgrey;
+    opacity: 0.3;
+}
+
+.apptItem p {
+    margin: 0 0 0.5rem;
+}
